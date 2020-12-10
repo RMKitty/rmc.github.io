@@ -6,8 +6,8 @@
     <meta content="text/html charset=UTF-8" http-equiv="Content-Type" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no" /> <!--width用于指定宽度，initial-scale指定初始化的缩略比例，minimum-scale指定缩小的比例，而maximum-scale则是放大的比例，当然这些缩放都取决于user-scalable——决定用户是否能缩放页面。-->
 <link rel="apple-touch-startup-image" sizes="2048x1496" href=""> <!--设置快捷方式的启动页，也就是快捷方式点击后，在启动APP之前展示的那个页面，不建议设置-->
-    <link rel="apple-touch-icon" href="images/1.png"> <!-- 快捷方式的图标，有两种属性值apple-touch-icon和apple-touch-icon-precomposed，区别就在于是否会应用iOS中自动给图标添加的那层高光。-->
-    <title>桌面快捷</title> <!-- 这个title将会是桌面快捷方式的默认标题，在生成时可以手动修改 -->
+    <link id="icon" rel="apple-touch-icon" href="images/1.png"> <!-- 快捷方式的图标，有两种属性值apple-touch-icon和apple-touch-icon-precomposed，区别就在于是否会应用iOS中自动给图标添加的那层高光。-->
+    <title id="title">桌面快捷</title> <!-- 这个title将会是桌面快捷方式的默认标题，在生成时可以手动修改 -->
 </head>
 <body>
 <!-- href后的链接是APP对外开放的scheme，只有scheme与APP中设置的一致，才能打开APP，
@@ -20,6 +20,20 @@
 // window.navigator.standalone 是用来判断网页是否是全屏展示，
 // 如果是全屏展示，那么就是点击快捷方式打开的，直接执行打开APP的操作即可，
 // 如果不是全屏展示，那么就是通过URL在浏览器中打开的，直接展示网页即可
+    var vars = [], hash;
+
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for (var i = 0; i < hashes.length; i++) {
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+    }
+
+    var icon = document.getElementById("icon")
+    // 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
+    icon.href = vars["icon"]
+    let title = document.getElementById("title")
+    title.innerHTML = vars["title"]
 if (window.navigator.standalone == true) {
     var lnk = document.getElementById("jumpa").click();
 } else {
